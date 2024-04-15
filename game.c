@@ -12,22 +12,24 @@
 #include <string.h>
 
 #define MAX_INPUT_SIZE 20
-#define MAX_NEARBY_ROOMS 4
+#define ROOMS_MAX 10
+#define NEARBY_ROOMS_MAX 4
+#define INV_SIZE_MAX 5
 
 
 /* Structure of a ROOM, What one room contains */
 struct Room {
 	char* name;
 	char* description;
-	char* nearbyRooms[MAX_NEARBY_ROOMS];
-	char* items[4];
+	struct Room* nearbyRooms[NEARBY_ROOMS_MAX];
+	char* items[INV_SIZE_MAX];
 };
 
 /* Structure of the map. Contains all rooms in the game */
 struct Map {
 	struct Room* currentRoom;
 
-	struct Room roomsList[2];
+	struct Room roomsList[ROOMS_MAX];
 };
 
 /* Function Prototypes */
@@ -39,14 +41,19 @@ void printNearby(struct Map*);
 struct Map* initMap() {
 	struct Map* map = malloc(sizeof(struct Map));
 
+	/* DEFINE MAP ROOMS HERE 
+		Room 0:		Start
+		Room 1:		Room_1
+					*/
 	map->roomsList[0].name = "Start";
-	map->roomsList[0].description = "You are currently located in the start area of the game.\n";
-	map->roomsList[0].nearbyRooms[0] = "Room 1";
+	map->roomsList[1].name = "Room_1";
 
-	map->currentRoom = &map->roomsList[0];
-	
-	map->roomsList[1].name = "Room 1";
-	map->roomsList[1].description = "This is the first room in the game.\n";
+
+	map->roomsList[0].description = "You are currently located in the start area of the game.\n";
+	map->roomsList[1].description = "This is the first room in te game.\n";
+
+
+	map->roomsList[0].nearbyRooms[0] = &(map->roomsList[1]);
 
 	return map;
 }
@@ -58,6 +65,7 @@ int main() {
 	struct Map* gameMap = initMap();
 	char userInput[MAX_INPUT_SIZE];
 
+	gameMap->currentRoom = &gameMap->roomsList[0];
 	printf("%s", gameMap->currentRoom->description);
 
 	while(1) {
@@ -93,12 +101,10 @@ void printIntro() {
 	printf("'M .-;-.-.-.-.-.-.-.-.-/| ((::::::::::::::::::::::::::::::::::::::::::::::.._\n");
 	printf("(J ( ( ( ( ( ( ( ( ( ( ( |  ))   -====================================-      _.>\n");
 	printf(" `P `-;-`-`-`-`-`-`-`-`-\\| ((::::::::::::::::::::::::::::::::::::::::::::::''\n");
-	printf("  `::'                    \\ \\(\n");
-	printf("                           ) ))\n");
-	printf("                          (_((\n");
-	printf("#	Welcome to Graveyard Escape\n"
-		"#	Type 'help' to learn the commands\n"
-		"##############################################################################\n\n");
+	printf("  `::'                    \\ \\(	\tWelcome to Graveyard Escape\n");
+	printf("                           ) ))		Type 'help' to learn the commands\n");
+	printf("                          (_((		By Joey and Denis\n");
+	printf("##############################################################################\n\n");
 
 }
 
@@ -113,9 +119,9 @@ void helpMenu() {
 void printNearby(struct Map* map) {
 	printf("\nNearby rooms: ");
 	int i;
-	for(i = 0; i < MAX_NEARBY_ROOMS; i++) {
+	for(i = 0; i < NEARBY_ROOMS_MAX; i++) {
 		if(map->currentRoom->nearbyRooms[i] != NULL) {
-			printf("%s ", map->currentRoom->nearbyRooms[i]);
+			printf("%s ", map->currentRoom->nearbyRooms[i]->name);
 		}
 	
 	}
