@@ -36,6 +36,7 @@ struct Map {
 void printIntro();
 void helpMenu();
 void printNearby(struct Map*);
+void gotoroom(struct Map*, char*);
 
 /* This function creates the definitions of all the rooms and returns the map pointer */
 struct Map* initMap() {
@@ -54,6 +55,7 @@ struct Map* initMap() {
 
 
 	map->roomsList[0].nearbyRooms[0] = &(map->roomsList[1]);
+	map->roomsList[1].nearbyRooms[0] = &(map->roomsList[0]);
 
 	return map;
 }
@@ -64,6 +66,7 @@ int main() {
 
 	struct Map* gameMap = initMap();
 	char userInput[MAX_INPUT_SIZE];
+	char* token;
 
 	gameMap->currentRoom = &gameMap->roomsList[0];
 	printf("%s", gameMap->currentRoom->description);
@@ -76,21 +79,41 @@ int main() {
 		}
 		userInput[strlen(userInput)-1] = '\0';
 
-		if(!strcmp(userInput, "quit")) {
+		if(strcmp(userInput, "quit") == 0) {
 			break;
 		}
 
-		if(!strcmp(userInput, "help")) {
+		if(strcmp(userInput, "help") == 0) {
 			helpMenu();
 		}
 
-		if(!strcmp(userInput, "nearby")) {
+		if(strcmp(userInput, "nearby") == 0) {
 			printNearby(gameMap);
+		}
+
+		token = strtok(userInput, " ");
+		if(strcmp(token, "goto") == 0) {
+			token = strtok(NULL, " ");
+			if(token != NULL) {
+				gotoroom(gameMap, token);
+			}
 		}
 	}
 
 	free(gameMap);
 	return 0;
+}
+
+void gotoroom(struct Map* map, char* room) {
+	int i;
+	for(i = 0; i < NEARBY_ROOMS_MAX; i++) {
+		if(map->currentRoom->nearbyRooms[i] != NULL) {
+			if(strcmp(map->currentRoom->nearbyRooms[i]->name, room) == 0)  {
+				map->currentRoom = map->currentRoom->nearbyRooms[i];
+				printf("%s\n", map->currentRoom->description);
+			}
+		}
+	}
 }
 
 void printIntro() {
