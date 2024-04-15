@@ -134,6 +134,7 @@ void printIntro() {
 void helpMenu() {
 	printf("\nHelp Menu:\n"
 			"\tnearby :	shows nearby locations\n"
+			"\tgoto <room>:	enters a room\n"
 			"\thelp :	\topens this menu\n"
 			"\tquit :	\texits the game\n"
 			"\t...\n\n");
