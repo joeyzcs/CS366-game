@@ -38,6 +38,7 @@ void helpMenu();
 void printNearby(struct Map*);
 void gotoroom(struct Map*, char*);
 void whereami(struct Map*);
+void pickup(struct Map*);
 
 /* This function creates the definitions of all the rooms and returns the map pointer */
 struct Map* initMap() {
@@ -62,8 +63,11 @@ struct Map* initMap() {
 	map->roomsList[4].description = "\nYou are currently at the Morgue. An overgrown house that is home to those yet to be buried. You notice a padlock on the gate. There must be a key somewhere. Lost_Burials, Soul_Forest, and the Old_Chapel are nearby.\n\n";
 	map->roomsList[5].description = "\nYou are currently at the Old_Chapel. An old structure that appears it could collapse any second. The Morgue is nearby.\n\n";
 
+	/* Set the items in each room */
+	map->roomsList[2].items[0] = "Sword";
+	map->roomsList[2].items[1] = "Key";
 
-
+	/* Set the nearby rooms of each room */
 	map->roomsList[0].nearbyRooms[0] = &(map->roomsList[1]);
 	map->roomsList[0].nearbyRooms[1] = &(map->roomsList[2]);
 
@@ -130,10 +134,23 @@ int main() {
 				gotoroom(gameMap, token);
 			}
 		}
+		if(strcmp(token, "pickup") == 0) {
+			pickup(gameMap);
+		}
 	}
 
 	free(gameMap);
 	return 0;
+}
+
+void pickup(struct Map* map) {
+	int i;
+	for(i = 0; i < INV_SIZE_MAX; i++) {
+		if(map->currentRoom->items[i] != NULL) {
+			printf("%s ", map->currentRoom->items[i]);
+		}
+	}
+	printf("\n");
 }
 
 void gotoroom(struct Map* map, char* room) {
@@ -167,6 +184,7 @@ void helpMenu() {
 	printf("\nHelp Menu:\n"
 			"\tnearby :	shows nearby locations\n"
 			"\tgoto <room>:	enters a room\n"
+			"\tpickup <item>:	picks up item\n"
 			"\thelp :	\topens this menu\n"
 			"\tquit :	\texits the game\n"
 			"\twhereami :    \tdescribes your current location\n");
