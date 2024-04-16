@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_INPUT_SIZE 20
+#define MAX_INPUT_SIZE 50
 #define ROOMS_MAX 10
 #define NEARBY_ROOMS_MAX 12
 #define INV_SIZE_MAX 5
@@ -66,16 +66,21 @@ struct Map* initMap() {
 
 	map->roomsList[0].nearbyRooms[0] = &(map->roomsList[1]);
 	map->roomsList[0].nearbyRooms[1] = &(map->roomsList[2]);
-	map->roomsList[1].nearbyRooms[2] = &(map->roomsList[0]); 
-	map->roomsList[2].nearbyRooms[3] = &(map->roomsList[0]);
-	map->roomsList[2].nearbyRooms[4] = &(map->roomsList[1]);
-	map->roomsList[2].nearbyRooms[5] = &(map->roomsList[3]);
-	map->roomsList[3].nearbyRooms[6] = &(map->roomsList[2]);
-	map->roomsList[3].nearbyRooms[7] = &(map->roomsList[4]);
-	map->roomsList[4].nearbyRooms[8] = &(map->roomsList[2]);
-	map->roomsList[4].nearbyRooms[9] = &(map->roomsList[3]);
-	map->roomsList[4].nearbyRooms[10] = &(map->roomsList[5]);
-	map->roomsList[5].nearbyRooms[11] = &(map->roomsList[4]);
+
+	map->roomsList[1].nearbyRooms[0] = &(map->roomsList[0]); 
+
+	map->roomsList[2].nearbyRooms[0] = &(map->roomsList[0]);
+	map->roomsList[2].nearbyRooms[1] = &(map->roomsList[1]);
+	map->roomsList[2].nearbyRooms[2] = &(map->roomsList[3]);
+
+	map->roomsList[3].nearbyRooms[0] = &(map->roomsList[2]);
+	map->roomsList[3].nearbyRooms[1] = &(map->roomsList[4]);
+
+	map->roomsList[4].nearbyRooms[0] = &(map->roomsList[2]);
+	map->roomsList[4].nearbyRooms[1] = &(map->roomsList[3]);
+	map->roomsList[4].nearbyRooms[2] = &(map->roomsList[5]);
+
+	map->roomsList[5].nearbyRooms[0] = &(map->roomsList[4]);
 
 
 	return map;
