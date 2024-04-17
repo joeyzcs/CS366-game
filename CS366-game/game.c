@@ -25,6 +25,7 @@ struct Player {
 struct Room {
 	char* name;
 	char* description;
+	char* altDescription;
 	struct Room* nearbyRooms[NEARBY_ROOMS_MAX];
 	char* items[INV_SIZE_MAX];
 };
@@ -66,11 +67,27 @@ struct Map* initMap() {
 	/* Description of all rooms */
 
 	map->roomsList[0].description = "\nYou are currently located at the start area of the game. The Cemetery_Entrance. Type 'headstone' to view the entire map.\n\n";
-	map->roomsList[1].description = "\nYou are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here.\n\n";
+
+	map->roomsList[1].description = "\nYou are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here. You notice a Damascus Steel Sword rested upon a tombstone. It could prove to be useful, you should pick it up.\n\n";
+
 	map->roomsList[2].description = "\nYou are currently in the Lost_Burials. Those forgotten in history roam through these graves angry and undead. You might need a sword to protect yourself here.\n\n";
+
 	map->roomsList[3].description = "\nYou are currently in Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. Those who enter these woods rarely come out alive. Good luck.\n\n";
+
 	map->roomsList[4].description = "\nYou are currently at the Morgue. An overgrown house that is home to those yet to be buried. You notice a padlock on the gate. There must be a key somewhere. Lost_Burials, Soul_Forest, and the Old_Chapel are nearby.\n\n";
+
 	map->roomsList[5].description = "\nYou are currently at the Old_Chapel. An old structure that appears it could collapse any second. The Morgue is nearby.\n\n";
+
+
+	/* Alternate descriptions of rooms [1], [3], and [4] */
+	
+	map->roomsList[1].altDescription = "You are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here.\n\n";
+
+	map->roomsList[3].altDescription = "You are currently in Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. Those who enter these woods rarely come out alive. Good luck.\n\n";
+
+	map->roomsList[4].altDescription = "You are currently at the Morgue. An overgrown house that is home to those yet to be buried. You notice a padlock on the gate. Lost_Burials, Soul_Forest, and the Old_Chapel are nearby.\n\n";
+
+
 
 	/* Set the items in each room */
 	map->roomsList[1].items[0] = "Damascus Steel Sword";
@@ -183,15 +200,29 @@ void pickup(struct Map* map) {
 }
 
 void gotoroom(struct Map* map, char* room) {
-	int i;
+	int i, j, k;
 	for(i = 0; i < NEARBY_ROOMS_MAX; i++) {
 		if(map->currentRoom->nearbyRooms[i] != NULL) {
 			if(strcmp(map->currentRoom->nearbyRooms[i]->name, room) == 0)  {
 				map->currentRoom = map->currentRoom->nearbyRooms[i];
+			
+				/* check for picked up items for alternate description */
+				for(k = 0; k < INV_SIZE_MAX; k++) {
+					if(map->currentRoom->items[k] != NULL) {
+						for(j = 0; j < INV_SIZE_MAX; j++) {
+							if(map->player.inventory[j] == map->currentRoom->items[k] && map->player.inventory[j] != NULL) {
+								printf("\n%s\n", map->currentRoom->altDescription);
+								return;
+							}
+						}
+					}
+				}
 				printf("%s\n", map->currentRoom->description);
+				return;
 			}
 		}
 	}
+	printf("\nThat area is not nearby!\n\n");
 }
 
 void printIntro() {
