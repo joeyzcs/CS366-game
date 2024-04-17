@@ -1,4 +1,4 @@
-/****************************************************************
+/*
  * File: 	game.c
  * Author: 	Denis Alisa, Joseph Stiehm
  * Description: Adventure game by Joseph Stiehm and Denis Alisa
@@ -16,6 +16,10 @@
 #define NEARBY_ROOMS_MAX 12
 #define INV_SIZE_MAX 5
 
+struct Player {
+	char name[MAX_INPUT_SIZE];
+	char* inventory[INV_SIZE_MAX];
+};
 
 /* Structure of a ROOM, What one room contains */
 struct Room {
@@ -30,6 +34,8 @@ struct Map {
 	struct Room* currentRoom;
 
 	struct Room roomsList[ROOMS_MAX];
+
+	struct Player player;
 };
 
 /* Function Prototypes */
@@ -39,6 +45,7 @@ void printNearby(struct Map*);
 void gotoroom(struct Map*, char*);
 void whereami(struct Map*);
 void pickup(struct Map*);
+void inventory(struct Map*);
 
 /* This function creates the definitions of all the rooms and returns the map pointer */
 struct Map* initMap() {
@@ -55,6 +62,8 @@ struct Map* initMap() {
 	map->roomsList[4].name = "Morgue";
 	map->roomsList[5].name = "Old_Chapel";
 
+	
+	/* Description of all rooms */
 
 	map->roomsList[0].description = "\nYou are currently located at the start area of the game. The Cemetery_Entrance. Type 'headstone' to view the entire map.\n\n";
 	map->roomsList[1].description = "\nYou are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here.\n\n";
@@ -64,8 +73,8 @@ struct Map* initMap() {
 	map->roomsList[5].description = "\nYou are currently at the Old_Chapel. An old structure that appears it could collapse any second. The Morgue is nearby.\n\n";
 
 	/* Set the items in each room */
-	map->roomsList[2].items[0] = "Sword";
-	map->roomsList[2].items[1] = "Key";
+	map->roomsList[1].items[0] = "Damascus Steel Sword";
+	map->roomsList[3].items[1] = "Key";
 
 	/* Set the nearby rooms of each room */
 	map->roomsList[0].nearbyRooms[0] = &(map->roomsList[1]);
@@ -98,7 +107,17 @@ int main() {
 	char userInput[MAX_INPUT_SIZE];
 	char* token;
 
-	printf("Welcome to Graveyard Escape! You must fight your way through the undead to defeat the skeleton. Good luck. Your adventure starts now.\n\n");
+	printf("Welcome to Graveyard Escape! You must fight your way through the undead to defeat the skeleton.\n\n");
+
+	printf("\nEnter your character's name: ");
+	if (fgets(gameMap->player.name, MAX_INPUT_SIZE, stdin) == NULL) {
+		printf("Input error!\n");
+		return 0;
+	}
+	gameMap->player.name[strlen(gameMap->player.name)-1] = '\0';
+
+	printf("\nGood luck %s. Your adventure starts now.\n", gameMap->player.name);
+	
 
 	gameMap->currentRoom = &gameMap->roomsList[0];
 	printf("%s", gameMap->currentRoom->description);
@@ -137,6 +156,9 @@ int main() {
 		if(strcmp(token, "pickup") == 0) {
 			pickup(gameMap);
 		}
+		if(strcmp(userInput, "inventory") == 0) {
+			inventory(gameMap);
+		}
 	}
 
 	free(gameMap);
@@ -144,10 +166,17 @@ int main() {
 }
 
 void pickup(struct Map* map) {
-	int i;
+	int i, j;
 	for(i = 0; i < INV_SIZE_MAX; i++) {
 		if(map->currentRoom->items[i] != NULL) {
-			printf("%s ", map->currentRoom->items[i]);
+			for(j = 0; j < INV_SIZE_MAX; j++) {
+				if(map->player.inventory[j] != map->currentRoom->items[i] && map->player.inventory[j] == NULL) {
+					map->player.inventory[j] = map->currentRoom->items[i];
+					break;
+				}
+			}
+			printf("\nYou picked up a %s\n", map->currentRoom->items[i]);
+
 		}
 	}
 	printf("\n");
@@ -182,12 +211,13 @@ void printIntro() {
 
 void helpMenu() {
 	printf("\nHelp Menu:\n"
-			"\tnearby :	shows nearby locations\n"
+			"\tnearby:	\tshows nearby locations\n"
 			"\tgoto <room>:	enters a room\n"
 			"\tpickup <item>:	picks up item\n"
-			"\thelp :	\topens this menu\n"
-			"\tquit :	\texits the game\n"
-			"\twhereami :    \tdescribes your current location\n");
+			"\thelp:	\topens this menu\n"
+			"\tquit:	\texits the game\n"
+			"\twhereami:   \tdescribes your current location\n"
+			"\tinventory:	displays contents of your inventory\n");
 }
 
 void printNearby(struct Map* map) {
@@ -205,4 +235,18 @@ void printNearby(struct Map* map) {
 void whereami(struct Map* map) {
 
 	printf("%s\n", map->currentRoom->description);
+}
+
+void inventory(struct Map* map) {
+
+	int i;
+	if(map->player.inventory[0] == NULL) {
+		printf("\nInventory is empty.\n");
+	}
+	for(i = 0; i < INV_SIZE_MAX; i++) {
+		if(map->player.inventory[i] != NULL) {
+			printf("\n%s ", map->player.inventory[i]);
+		}
+	}
+	printf("\n\n");
 }
