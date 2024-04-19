@@ -48,6 +48,7 @@ void whereami(struct Map*);
 void pickup(struct Map*);
 void inventory(struct Map*);
 void run(struct Map*);
+void fight(struct Map*);
 void altDescCheck(struct Map*);
 
 /* This function creates the definitions of all the rooms and returns the map pointer */
@@ -72,16 +73,16 @@ struct Map* initMap() {
 	map->roomsList[0].description = "\nYou are currently located at the start area of the game. The Cemetery_Entrance. Type 'headstone' to view the entire map.\n\n";
 
 	map->roomsList[1].description = "\nYou are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here. You notice a Damascus Steel Sword rested upon a tombstone. It could prove to be useful, you should pick it up.\n\n";
+	
+map->roomsList[2].description = "\nYou are currently at the Lost_Burials. Those forgotten in history roam this area angry and undead. They notice you and begin to swarm you. Do you run or fight?\n\n";
 
-	map->roomsList[2].description = "\nYou are currently in the Lost_Burials. Those forgotten in history roam through these graves angry and undead. The angry undead have noticed you. They begin to swarm you. Do you run or fight?.\n\n";
+	map->roomsList[3].description = "\nYou are currently in the Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. Those who enter these woods rarely come out alive. You are surrouned by ghosts who crave a body to inhabit. Do you run or fight?.\n\n";
 
-	map->roomsList[3].description = "\nYou are currently in Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. Those who enter these woods rarely come out alive. You are surrouned by ghosts who crave a body to inhabit. Do you run or fight?.\n\n";
+	map->roomsList[4].description = "\nYou are currently at the Morgue. An overgrown house that is home to those yet to be buried. You notice a padlock on the gate. There must be a key somewhere. Use the key to enter the Morgue_Storage.\n\n";
 
-	map->roomsList[4].description = "\nYou are currently at the Morgue. An overgrown house that is home to those yet to be buried. You notice a padlock on the gate. There must be a key somewhere. Use the key to enter.\n\n";
+	map->roomsList[5].description = "\nYou are currently inside the morgue storage room. It is filled with the undead waiting for their time to be buried. You notice these undead look much stronger than the ones before. Do you run or fight?\n\n";
 
-	map->roomsList[5].description = "\nYou are inside the morgue storage room. It is filled witht the undead waiting for their time to be buried. You notice these undead look much stronger than the ones before. Do you run or fight?\n\n";
-
-	map->roomsList[6].description = "\nYou are currently at the Old_Chapel. An old structure that appears it could collapse any second. You sense victory is near and a strong urge to fight overwhelms you. You enter the chapel and at the alter you see him. The final opponent. The skeleton. Do you run or fight?\n\n";
+	map->roomsList[6].description = "\nYou are currently at the Old_Chapel. An old structure that appears it could collapse any second. You sense victory is near and a strong urge to fight overwhelms you. You enter the chapel and at the alter you see him. The final opponent. The Skeleton. Do you run or fight?\n\n";
 
 
 	/* Alternate descriptions of rooms [1], [3], and [4] */
@@ -103,6 +104,7 @@ struct Map* initMap() {
 	map->roomsList[0].nearbyRooms[1] = &(map->roomsList[2]);
 
 	map->roomsList[1].nearbyRooms[0] = &(map->roomsList[0]); 
+	map->roomsList[1].nearbyRooms[1] = &(map->roomsList[2]); 
 
 	map->roomsList[2].nearbyRooms[0] = &(map->roomsList[0]);
 	map->roomsList[2].nearbyRooms[1] = &(map->roomsList[1]);
@@ -111,9 +113,8 @@ struct Map* initMap() {
 	map->roomsList[3].nearbyRooms[0] = &(map->roomsList[2]);
 	map->roomsList[3].nearbyRooms[1] = &(map->roomsList[4]);
 
-	map->roomsList[4].nearbyRooms[0] = &(map->roomsList[2]);
-	map->roomsList[4].nearbyRooms[1] = &(map->roomsList[3]);
-	map->roomsList[4].nearbyRooms[2] = &(map->roomsList[5]);
+	map->roomsList[4].nearbyRooms[0] = &(map->roomsList[3]);
+	map->roomsList[4].nearbyRooms[1] = &(map->roomsList[5]);
 
 	map->roomsList[5].nearbyRooms[0] = &(map->roomsList[4]);
 	map->roomsList[5].nearbyRooms[1] = &(map->roomsList[6]);
@@ -188,6 +189,11 @@ int main() {
 		if(strcmp(userInput, "run") == 0) {
 			run(gameMap);
 		}
+
+		if(strcmp(userInput, "fight") == 0) {
+			fight(gameMap);
+		}
+
 	}
 
 	free(gameMap);
@@ -199,12 +205,17 @@ void pickup(struct Map* map) {
 	for(i = 0; i < INV_SIZE_MAX; i++) {
 		if(map->currentRoom->items[i] != NULL) {
 			for(j = 0; j < INV_SIZE_MAX; j++) {
-				if(map->player.inventory[j] != map->currentRoom->items[i] && map->player.inventory[j] == NULL) {
-					map->player.inventory[j] = map->currentRoom->items[i];
+				if(map->player.inventory[j] == NULL) {
+					map->player.inventory[0] = map->currentRoom->items[i];
+					printf("\nYou picked up a %s\n", map->currentRoom->items[i]);
+					break;
+				}
+				else if((strcmp(map->player.inventory[j], map->currentRoom->items[i]) != 0) && map->player.inventory[j] != NULL) {
+					map->player.inventory[1] = map->currentRoom->items[i];
+					printf("\nYou picked up a %s\n", map->currentRoom->items[i]);
 					break;
 				}
 			}
-			printf("\nYou picked up a %s\n", map->currentRoom->items[i]);
 
 		}
 	}
@@ -216,7 +227,22 @@ void gotoroom(struct Map* map, char* room) {
 	for(i = 0; i < NEARBY_ROOMS_MAX; i++) {
 		if(map->currentRoom->nearbyRooms[i] != NULL) {
 			if(strcmp(map->currentRoom->nearbyRooms[i]->name, room) == 0)  {
+				if(strcmp(room, map->roomsList[5].name) == 0) {	
+					
+					int hasKey = 0;
+					for(j = 0; j < INV_SIZE_MAX; j++) {
+						if(map->player.inventory[j] != NULL && strcmp(map->player.inventory[j], map->roomsList[3].items[1]) == 0) {
+							hasKey = 1;
+							break;
+						}
+					}
+					if(hasKey != 1) {
+						printf("\nYou need a key!\n");
+						break;
+					}
+				}
 				map->currentRoom = map->currentRoom->nearbyRooms[i];
+			
 			
 				/* check for picked up items for alternate description */
 				for(k = 0; k < INV_SIZE_MAX; k++) {
@@ -268,7 +294,7 @@ void printNearby(struct Map* map) {
 	int i;
 	for(i = 0; i < NEARBY_ROOMS_MAX; i++) {
 		if(map->currentRoom->nearbyRooms[i] != NULL) {
-			printf("%s ", map->currentRoom->nearbyRooms[i]->name);
+			printf("\n\n%s ", map->currentRoom->nearbyRooms[i]->name);
 		}
 	
 	}
@@ -295,15 +321,15 @@ void inventory(struct Map* map) {
 }
 
 void run(struct Map* map) {
-	if(strcmp(map->currentRoom->name, map->roomsList[3].name) == 0 ) {
-		map->currentRoom = &map->roomsList[2];
+	if(strcmp(map->currentRoom->name, map->roomsList[2].name) == 0 ) {
+		map->currentRoom = &map->roomsList[0];
 		altDescCheck(map);
 		return;
 	}
 
 
-	if(strcmp(map->currentRoom->name, map->roomsList[2].name) == 0 ) {
-		map->currentRoom = &map->roomsList[0];
+	if(strcmp(map->currentRoom->name, map->roomsList[3].name) == 0 ) {
+		map->currentRoom = &map->roomsList[2];
 		altDescCheck(map);
 		return;
 	}
@@ -324,6 +350,78 @@ void run(struct Map* map) {
 
 		
 }
+
+void fight(struct Map* map) {
+	if(strcmp(map->currentRoom->name, map->roomsList[2].name) == 0 ) {
+		printf("\nHIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n\n");
+		printf("You have come out victorious against the undead. Your Damascus Steel Sword cut through them like butter. Good job!\n\n");
+		return;
+	}
+
+	if(strcmp(map->currentRoom->name, map->roomsList[3].name) == 0 ) {
+		printf("\nHIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("HIT!\n\n");
+		printf("You have elmininated the ghosts who swarmed you. One of them drops a key. Could be useful, you should pick it up.\n\n");
+		return;
+	}
+
+	if(strcmp(map->currentRoom->name, map->roomsList[5].name) == 0) {
+		printf("\nHIT!\n");
+		printf("HIT!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n\n");
+		printf("You have been injured by the stronger undead. You continue to fight.\n\n");
+
+		printf("\nMISS!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n\n");
+		printf("You have killed the already dead. Nice. You notice your Damascus Steel Sword is glowing now. The stronger undead seemed to have strenghtened your sword.");
+		
+		map->player.inventory[0] = "Enchanted Damascus Steel Sword\n";
+		printf("\n\nCheck your inventory!\n\n");
+		return;
+	}
+
+	if(strcmp(map->currentRoom->name, map->roomsList[6].name) == 0) {
+		printf("\nHIT!\n");
+		printf("HIT!\n");
+		printf("HIT!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n\n");
+		printf("The Skeleton is stronger and faster than you. He seems to know your every move. You continue to fight.\n\n");
+
+		printf("\nHIT!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("MISS!\n");
+		printf("HIT!\n");
+		printf("MISS!\n\n");
+		printf("The Skeleton is eating your hits like its breakfast, lunch, and dinner! You miss and his attack throws you back. Your sword is flung to the other side of the chapel. You've gotten this far already. You fight to the death.\n\n");
+		printf("You stand up, ready to fight again. The Skeleton makes a lunge at you. Just as your life flashes before your eyes, your Enchanted Damascus Steel Sword levitates behind the Skeleton. It rips through the air at lightening speed and rips apart the Skeleton bone by bone. You have been saved by some mysterious force. You have won.\n\n\n\n");
+		printf("CONGRATULATIONS! You have reached the end of the game. Thank you for playing.\n\n");
+	}
+}
+
 
 	/* REUSABLE CODE */
 void altDescCheck(struct Map* map) {
