@@ -42,6 +42,7 @@ struct Map {
 /* Function Prototypes */
 void printIntro();
 void helpMenu();
+void headstoneMap();
 void printNearby(struct Map*);
 void gotoroom(struct Map*, char*);
 void whereami(struct Map*);
@@ -70,7 +71,7 @@ struct Map* initMap() {
 	
 	/* Description of all rooms */
 
-	map->roomsList[0].description = "\nYou are currently located at the start area of the game. The Cemetery_Entrance. Type 'headstone' to view the entire map.\n\n";
+	map->roomsList[0].description = "\nYou are currently located at the start area of the game. The Cemetery_Entrance. Type 'headstone' to view the entire map or 'nearby' to view adjacent areas.\n\n";
 
 	map->roomsList[1].description = "\nYou are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here. You notice a Damascus Steel Sword rested upon a tombstone. It could prove to be useful, you should pick it up.\n\n";
 	
@@ -133,7 +134,7 @@ int main() {
 	char userInput[MAX_INPUT_SIZE];
 	char* token;
 
-	printf("Welcome to Graveyard Escape! You must fight your way through the undead to defeat the skeleton.\n\n");
+	printf("Welcome to Graveyard Escape! You must fight your way through the undead to defeat the Skeleton.\n\n");
 
 	printf("\nEnter your character's name: ");
 	if (fgets(gameMap->player.name, MAX_INPUT_SIZE, stdin) == NULL) {
@@ -162,6 +163,10 @@ int main() {
 
 		if(strcmp(userInput, "help") == 0) {
 			helpMenu();
+		}
+
+		if(strcmp(userInput, "headstone") == 0) {
+			headstoneMap();
 		}
 
 		if(strcmp(userInput, "nearby") == 0) {
@@ -237,8 +242,8 @@ void gotoroom(struct Map* map, char* room) {
 						}
 					}
 					if(hasKey != 1) {
-						printf("\nYou need a key!\n");
-						break;
+						printf("\nYou need a key!\n\n");
+						return;
 					}
 				}
 				map->currentRoom = map->currentRoom->nearbyRooms[i];
@@ -422,6 +427,21 @@ void fight(struct Map* map) {
 	}
 }
 
+void headstoneMap() {
+	printf("\n\n\n");
+
+	printf("       Cemtery_Entrance\n");
+    	printf("             / \\\n");
+    	printf("            /   \\\n");
+    	printf("Ancient_Ruins    Lost_Burials\n");
+    	printf("                  / \\\n");
+    	printf("                 /   \\\n");
+    	printf("      Soul_Forest    Morgue\n");
+    	printf("                       |\n");
+    	printf("                 Morgue_Storage\n");
+    	printf("                       |\n");
+    	printf("                   Old_Chapel\n\n\n");
+}
 
 	/* REUSABLE CODE */
 void altDescCheck(struct Map* map) {
