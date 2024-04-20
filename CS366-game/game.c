@@ -19,6 +19,7 @@
 struct Player {
 	char name[MAX_INPUT_SIZE];
 	char* inventory[INV_SIZE_MAX];
+	int itemCount;
 };
 
 /* Structure of a ROOM, What one room contains */
@@ -28,6 +29,7 @@ struct Room {
 	char* altDescription;
 	struct Room* nearbyRooms[NEARBY_ROOMS_MAX];
 	char* items[INV_SIZE_MAX];
+	int hasEnemy;
 };
 
 /* Structure of the map. Contains all rooms in the game */
@@ -46,7 +48,7 @@ void headstoneMap();
 void printNearby(struct Map*);
 void gotoroom(struct Map*, char*, char* userInput);
 void whereami(struct Map*);
-void pickup(struct Map*);
+void pickup(struct Map*, char*);
 void inventory(struct Map*);
 void run(struct Map*);
 void fight(struct Map*, char* userInput);
@@ -56,6 +58,7 @@ void altDescCheck(struct Map*);
 struct Map* initMap() {
 	struct Map* map = malloc(sizeof(struct Map));
 
+	map->player.itemCount = 0;
 	/* DEFINE MAP ROOMS HERE 
 		Room 0:		Start
 		Room 1:		Room_1
@@ -67,6 +70,9 @@ struct Map* initMap() {
 	map->roomsList[4].name = "Morgue";
 	map->roomsList[5].name = "Morgue_Storage";
 	map->roomsList[6].name = "Old_Chapel";
+
+	
+	map->roomsList[2].hasEnemy = 1;
 
 	
 	/* Description of all rooms */
@@ -97,7 +103,7 @@ map->roomsList[2].description = "\nYou are currently at the Lost_Burials. Those 
 
 
 	/* Set the items in each room */
-	map->roomsList[1].items[0] = "Damascus Steel Sword";
+	map->roomsList[1].items[0] = "Sword";
 	map->roomsList[3].items[1] = "Key";
 
 	/* Set the nearby rooms of each room */
@@ -133,6 +139,7 @@ int main() {
 	struct Map* gameMap = initMap();
 	char userInput[MAX_INPUT_SIZE];
 	char* token;
+
 
 	printf("Welcome to Graveyard Escape! You must fight your way through the undead to defeat the Skeleton.\n\n");
 
@@ -187,7 +194,12 @@ int main() {
 		}
 
 		if(strcmp(token, "pickup") == 0) {
-			pickup(gameMap);
+			/*pickup(gameMap);*/
+			token = strtok(NULL, " ");
+			if(token != NULL) {
+				pickup(gameMap, token);
+			}
+			
 		}
 
 		if(strcmp(userInput, "inventory") == 0) {
@@ -208,8 +220,8 @@ int main() {
 	return 0;
 }
 
-void pickup(struct Map* map) {
-	int i, j;
+void pickup(struct Map* map, char* item) {
+	/*int i, j;
 	for(i = 0; i < INV_SIZE_MAX; i++) {
 		if(map->currentRoom->items[i] != NULL) {
 			for(j = 0; j < INV_SIZE_MAX; j++) {
@@ -227,7 +239,24 @@ void pickup(struct Map* map) {
 
 		}
 	}
-	printf("\n");
+	printf("\n");*/
+	if(map->player.itemCount >= INV_SIZE_MAX) {
+		printf("Your inventory is full!\n");
+		return;
+	}
+	int i;
+	for(i = 0; i < INV_SIZE_MAX; i++) {
+		if(map->currentRoom->items[i] != NULL) {
+			if(strcmp(item, map->currentRoom->items[i]) == 0) {
+				map->player.inventory[map->player.itemCount] = map->currentRoom->items[i];
+				map->player.itemCount++;
+				printf("You picked up the: %s!\n", map->currentRoom->items[i]);
+				map->currentRoom->items[i] = NULL;
+				return;
+			}
+		}
+	}
+	printf("Item not found: %s!\n", item);
 }
 
 void gotoroom(struct Map* map, char* room, char* userInput) {
@@ -246,21 +275,6 @@ void gotoroom(struct Map* map, char* room, char* userInput) {
 					}
 					if(hasKey != 1) {
 						printf("\nYou need a key!\n\n");
-						return;
-					}
-				}
-
-				if(strcmp(room, map->roomsList[2].name) == 0) {	
-					
-					int hasSword = 0;
-					for(j = 0; j < INV_SIZE_MAX; j++) {
-						if(map->player.inventory[j] != NULL && strcmp(map->player.inventory[j], map->roomsList[1].items[0]) == 0) {
-							hasSword = 1;
-							break;
-						}
-					}
-					if(hasSword != 1) {
-						printf("\nYou should find a weapon before going in there!\n\n");
 						return;
 					}
 				}
@@ -504,7 +518,27 @@ void run(struct Map* map) {
 }
 
 void fight(struct Map* map, char* userInput) {
-	if(strcmp(map->currentRoom->name, map->roomsList[2].name) == 0 ) {
+	
+	int hasSword = 0;
+	int i;
+	for(i = 0; i < INV_SIZE_MAX; i++) {
+		if(map->player.inventory[i] != NULL) {
+			if(strcmp(map->player.inventory[i], "Sword") == 0) {
+				hasSword = 1;
+			}
+		}
+	}
+
+	if((strcmp(map->currentRoom->name, map->roomsList[2].name) == 0) && (map->currentRoom->hasEnemy == 1) ) {
+		if(hasSword == 0) {
+			printf("\nHIT!\n");
+			printf("HIT!\n");
+			printf("\nYou were defeated by the undead...\n");
+			printf("You were sent back to the start\n\n");
+			map->currentRoom = &map->roomsList[0];
+			printf("%s\n", map->currentRoom->description);
+			return;
+		}
 
 		printf("\nHIT!\n");
 		printf("HIT!\n");
