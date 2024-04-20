@@ -547,6 +547,7 @@ void fight(struct Map* map, char* userInput) {
 		printf("HIT!\n");
 		printf("HIT!\n\n");
 		printf("You have come out victorious against the undead. Your Damascus Steel Sword cut through them like butter. Good job!\n\n");
+		map->currentRoom->hasEnemy = 0;
 		return;
 	}
 
