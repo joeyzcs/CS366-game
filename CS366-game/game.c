@@ -44,12 +44,12 @@ void printIntro();
 void helpMenu();
 void headstoneMap();
 void printNearby(struct Map*);
-void gotoroom(struct Map*, char*);
+void gotoroom(struct Map*, char*, char* userInput);
 void whereami(struct Map*);
 void pickup(struct Map*);
 void inventory(struct Map*);
 void run(struct Map*);
-void fight(struct Map*);
+void fight(struct Map*, char* userInput);
 void altDescCheck(struct Map*);
 
 /* This function creates the definitions of all the rooms and returns the map pointer */
@@ -180,13 +180,16 @@ int main() {
 		token = strtok(userInput, " ");
 		if(strcmp(token, "goto") == 0) {
 			token = strtok(NULL, " ");
+
 			if(token != NULL) {
-				gotoroom(gameMap, token);
+				gotoroom(gameMap, token, userInput);
 			}
 		}
+
 		if(strcmp(token, "pickup") == 0) {
 			pickup(gameMap);
 		}
+
 		if(strcmp(userInput, "inventory") == 0) {
 			inventory(gameMap);
 		}
@@ -196,7 +199,7 @@ int main() {
 		}
 
 		if(strcmp(userInput, "fight") == 0) {
-			fight(gameMap);
+			fight(gameMap, userInput);
 		}
 
 	}
@@ -227,7 +230,7 @@ void pickup(struct Map* map) {
 	printf("\n");
 }
 
-void gotoroom(struct Map* map, char* room) {
+void gotoroom(struct Map* map, char* room, char* userInput) {
 	int i, j, k;
 	for(i = 0; i < NEARBY_ROOMS_MAX; i++) {
 		if(map->currentRoom->nearbyRooms[i] != NULL) {
@@ -246,6 +249,150 @@ void gotoroom(struct Map* map, char* room) {
 						return;
 					}
 				}
+
+				if(strcmp(room, map->roomsList[2].name) == 0) {	
+					
+					int hasSword = 0;
+					for(j = 0; j < INV_SIZE_MAX; j++) {
+						if(map->player.inventory[j] != NULL && strcmp(map->player.inventory[j], map->roomsList[1].items[0]) == 0) {
+							hasSword = 1;
+							break;
+						}
+					}
+					if(hasSword != 1) {
+						printf("\nYou should find a weapon before going in there!\n\n");
+						return;
+					}
+				}
+
+				if(strcmp(room, map->roomsList[2].name) == 0) {	
+					
+					map->currentRoom = map->currentRoom->nearbyRooms[i];
+
+					printf("%s\n", map->currentRoom->description);
+
+					int key = 0;	
+					while(key == 0) {
+						printf("> ");
+
+						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
+							printf("Input error!\n");
+							return;
+						}
+						userInput[strlen(userInput)-1] = '\0';
+
+						if(strcmp(userInput, "fight") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+						if(strcmp(userInput, "run") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+					}
+					key = 1;
+				}
+
+				if(strcmp(room, map->roomsList[3].name) == 0) {	
+					
+					map->currentRoom = map->currentRoom->nearbyRooms[i];
+
+					printf("%s\n", map->currentRoom->description);
+
+					int key = 0;	
+					while(key == 0) {
+						printf("> ");
+
+						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
+							printf("Input error!\n");
+							return;
+						}
+						userInput[strlen(userInput)-1] = '\0';
+
+						if(strcmp(userInput, "fight") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+						if(strcmp(userInput, "run") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+					}
+					key = 1;
+				}
+
+				if(strcmp(room, map->roomsList[5].name) == 0) {	
+					
+					map->currentRoom = map->currentRoom->nearbyRooms[i];
+
+					printf("%s\n", map->currentRoom->description);
+
+					int key = 0;	
+					while(key == 0) {
+						printf("> ");
+
+						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
+							printf("Input error!\n");
+							return;
+						}
+						userInput[strlen(userInput)-1] = '\0';
+
+						if(strcmp(userInput, "fight") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+						if(strcmp(userInput, "run") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+					}
+					key = 1;
+				}     
+
+				if(strcmp(room, map->roomsList[6].name) == 0) {	
+					
+					map->currentRoom = map->currentRoom->nearbyRooms[i];
+
+					printf("%s\n", map->currentRoom->description);
+
+					int key = 0;	
+					while(key == 0) {
+						printf("> ");
+
+						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
+							printf("Input error!\n");
+							return;
+						}
+						userInput[strlen(userInput)-1] = '\0';
+
+						if(strcmp(userInput, "fight") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+						if(strcmp(userInput, "run") != 0) {
+
+							printf("\nYou must either run or fight!\n\n");
+							return;
+						}
+
+					}
+					key = 1;
+				} 	
+
 				map->currentRoom = map->currentRoom->nearbyRooms[i];
 			
 			
@@ -356,8 +503,9 @@ void run(struct Map* map) {
 		
 }
 
-void fight(struct Map* map) {
+void fight(struct Map* map, char* userInput) {
 	if(strcmp(map->currentRoom->name, map->roomsList[2].name) == 0 ) {
+
 		printf("\nHIT!\n");
 		printf("HIT!\n");
 		printf("HIT!\n");
@@ -387,19 +535,35 @@ void fight(struct Map* map) {
 		printf("MISS!\n");
 		printf("MISS!\n");
 		printf("MISS!\n\n");
-		printf("You have been injured by the stronger undead. You continue to fight.\n\n");
+		printf("You have been injured by the stronger undead. Do you run or fight?\n\n");
 
-		printf("\nMISS!\n");
-		printf("HIT!\n");
-		printf("HIT!\n");
-		printf("HIT!\n");
-		printf("HIT!\n");
-		printf("HIT!\n\n");
-		printf("You have killed the already dead. Nice. You notice your Damascus Steel Sword is glowing now. The stronger undead seemed to have strenghtened your sword.");
+		printf("> ");
 		
-		map->player.inventory[0] = "Enchanted Damascus Steel Sword\n";
-		printf("\n\nCheck your inventory!\n\n");
-		return;
+		if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
+			printf("Input error!\n");
+			return;
+		}
+		userInput[strlen(userInput)-1] = '\0';
+
+		if(strcmp(userInput, "fight") == 0) {
+			
+			printf("\nMISS!\n");
+			printf("HIT!\n");
+			printf("HIT!\n");
+			printf("HIT!\n");
+			printf("HIT!\n");
+			printf("HIT!\n\n");
+			printf("You have killed the already dead. Nice. You notice your Damascus Steel Sword is glowing now. The stronger undead seemed to have strenghtened your sword.");
+		
+			map->player.inventory[0] = "Enchanted Damascus Steel Sword\n";
+			printf("\n\nCheck your inventory!\n\n");
+			return;
+		}
+
+		if(strcmp(userInput, "run") == 0) {
+			run(map);
+		}
+
 	}
 
 	if(strcmp(map->currentRoom->name, map->roomsList[6].name) == 0) {
@@ -411,19 +575,48 @@ void fight(struct Map* map) {
 		printf("MISS!\n");
 		printf("MISS!\n");
 		printf("MISS!\n\n");
-		printf("The Skeleton is stronger and faster than you. He seems to know your every move. You continue to fight.\n\n");
+		printf("The Skeleton is stronger and faster than you. He seems to know your every move. Do you run or keep fighting?\n\n");
 
-		printf("\nHIT!\n");
-		printf("MISS!\n");
-		printf("MISS!\n");
-		printf("MISS!\n");
-		printf("MISS!\n");
-		printf("MISS!\n");
-		printf("HIT!\n");
-		printf("MISS!\n\n");
-		printf("The Skeleton is eating your hits like its breakfast, lunch, and dinner! You miss and his attack throws you back. Your sword is flung to the other side of the chapel. You've gotten this far already. You fight to the death.\n\n");
-		printf("You stand up, ready to fight again. The Skeleton makes a lunge at you. Just as your life flashes before your eyes, your Enchanted Damascus Steel Sword levitates behind the Skeleton. It rips through the air at lightening speed and rips apart the Skeleton bone by bone. You have been saved by some mysterious force. You have won.\n\n\n\n");
-		printf("CONGRATULATIONS! You have reached the end of the game. Thank you for playing.\n\n");
+		printf("> ");
+		
+		if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
+			printf("Input error!\n");
+			return;
+		}
+		userInput[strlen(userInput)-1] = '\0';
+
+		if(strcmp(userInput, "fight") == 0) {
+
+			printf("\nHIT!\n");
+			printf("MISS!\n");
+			printf("MISS!\n");
+			printf("MISS!\n");
+			printf("MISS!\n");
+			printf("MISS!\n");
+			printf("HIT!\n");
+			printf("MISS!\n\n");
+			printf("The Skeleton is eating your hits like its breakfast, lunch, and dinner! You miss and his attack throws you back. Your sword is flung to the other side of the chapel. You've gotten this far already. Do you run or fight to the death?\n\n");
+		}
+
+		printf("> ");
+		
+		if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
+			printf("Input error!\n");
+			return;
+		}
+		userInput[strlen(userInput)-1] = '\0';
+
+
+		if(strcmp(userInput, "fight") == 0) {
+
+			printf("\nYou stand up, ready to fight again. The Skeleton makes a lunge at you. Just as your life flashes before your eyes, your Enchanted Damascus Steel Sword levitates behind the Skeleton. It rips through the air at lightening speed and rips apart the Skeleton bone by bone. You have been saved by some mysterious force. You have won.\n\n\n\n");
+		
+			printf("CONGRATULATIONS! %s you have reached the end of the game. Thank you for playing.\n\n", map->player.name);
+		}
+		
+		if(strcmp(userInput, "run") == 0) {
+			run(map);
+		}
 	}
 }
 
@@ -433,14 +626,14 @@ void headstoneMap() {
 	printf("       Cemtery_Entrance\n");
     	printf("             / \\\n");
     	printf("            /   \\\n");
-    	printf("Ancient_Ruins    Lost_Burials\n");
-    	printf("                  / \\\n");
-    	printf("                 /   \\\n");
-    	printf("      Soul_Forest    Morgue\n");
-    	printf("                       |\n");
-    	printf("                 Morgue_Storage\n");
-    	printf("                       |\n");
-    	printf("                   Old_Chapel\n\n\n");
+    	printf("Ancient_Ruins <--> Lost_Burials\n");
+    	printf("                     / \n");
+    	printf("                    /   \n");
+    	printf("             Soul_Forest <--> Morgue\n");
+    	printf("                               |\n");
+    	printf("                         Morgue_Storage\n");
+    	printf("                               |\n");
+    	printf("                           Old_Chapel\n\n\n");
 }
 
 	/* REUSABLE CODE */
