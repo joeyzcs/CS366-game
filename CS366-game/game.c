@@ -53,6 +53,7 @@ void inventory(struct Map*);
 void run(struct Map*);
 void fight(struct Map*, char* userInput);
 void altDescCheck(struct Map*);
+void undeadSkeleton();
 
 	/* Creates the definitions of all the rooms and returns the map pointer */
 struct Map* initMap() {
@@ -73,6 +74,10 @@ struct Map* initMap() {
 
 	
 	map->roomsList[2].hasEnemy = 1;
+	map->roomsList[3].hasEnemy = 1;
+	map->roomsList[5].hasEnemy = 1;
+	map->roomsList[6].hasEnemy = 1;
+
 
 	
 		/* Description of all rooms */
@@ -104,7 +109,7 @@ map->roomsList[2].description = "\nYou are currently at the Lost_Burials. Those 
 
 		/* Set the items in each room */
 	map->roomsList[1].items[0] = "sword";
-	map->roomsList[3].items[1] = "Key";
+	map->roomsList[3].items[1] = "key";
 
 		/* Set the nearby rooms of each room */
 	map->roomsList[0].nearbyRooms[0] = &(map->roomsList[1]);
@@ -200,6 +205,13 @@ int main() {
 			helpMenu();
 		}
 
+		if(gameMap->currentRoom->hasEnemy == 1) {
+			if((strcmp(userInput, "fight") != 0) && (strcmp(userInput, "run") != 0)) {
+				printf("Must fight the enemy or run!\n\n");
+				continue;
+			}
+		}		
+
 		if(strcmp(userInput, "headstone") == 0) {
 			headstoneMap();
 		}
@@ -247,6 +259,49 @@ int main() {
 	return 0;
 }
 
+void undeadSkeleton() {
+
+        printf("\n\n");
+        printf("                              _.--\"\"-._\n");
+        printf("  .                         .\"         \".\n");
+        printf(" / \\    ,^.         /(     Y             |      )\\\n");
+        printf("/   `---. |--'\\    (  \\__..'--   -   -- -'\"\"-.-'  )\n");
+        printf("|        :|    `>   '.     l_..-------.._l      .'\n");
+        printf("|      __l;__ .'      \"-.__.||_.-'v'-._||`\"----\"\n");
+        printf(" \\  .-' | |  `              l._       _.'\n");
+        printf("  \\/    | |                   l`^^'^^'j\n");
+        printf("        | |                _   \\_____/     _\n");
+        printf("        j |               l `--__)-'(__.--' |\n");
+        printf("        | |               | /`---``-----'\"1 |  ,-----.\n");
+        printf("        | |               )/  `--' '---'   \\'-'  ___  `-. \n");
+        printf("      _ L |_            //  `-.-.'`-----'  /  /  |   |  `. \\\n");
+        printf("     '._' / \\         _/(   `/   )- ---' ;  /__.J   L.__.\\ :\n");
+        printf("      `._;/7(-.......'  /        ) (     |  |            | |\n");
+        printf("      `._;l _'--------_/        )-'/     :  |___.    _._./ ;\n");
+        printf("        | |                 .__ )-'\\  __  \\  \\  I   1   / /\n");
+        printf("        `-'                /   `-\\-(-'   \\ \\  `.|   | ,' /\n");
+        printf("                           \\__  `-'    __/  `-. `---'',-'\n");
+        printf("                              )-._.-- (        `-----'\n");
+        printf("                             )(  l\\ o ('..-.\n");
+        printf("                       _..--' _'-' '--'.-. |\n");
+        printf("                __,,-'' _,,-''            \\ \\\n");
+        printf("               f'. _,,-'                   \\ \\\n");
+        printf("              ()--  |                       \\ \\\n");
+        printf("                \\   |                       /  \\\n");
+        printf("                  \\ \\                      |._  |\n");
+        printf("                   \\ \\                     |  ()|\n");
+        printf("                    \\ \\                     \\  /\n");
+        printf("                     ) `-.                   | |\n");
+        printf("                    // .__)                  | |\n");
+        printf("                 _.//7'                      | |\n");
+        printf("               '---'                         j_| `\n");
+        printf("                                            (| |\n");
+        printf("                                             |  \\\n");
+        printf("                                             |lllj\n");
+        printf("                                             |||||\n\n\n");
+
+}
+
 	/* Pick up items throughout the game */
 void pickup(struct Map* map, char* item) {
 
@@ -279,7 +334,7 @@ void gotoroom(struct Map* map, char* room, char* userInput) {
 					/* Check if player has the key to enter Morgue_Storage area */
 				if(strcmp(room, map->roomsList[5].name) == 0) {	
 					
-					int hasKey = 0;
+					/*int hasKey = 0;
 					for(j = 0; j < INV_SIZE_MAX; j++) {
 						if(map->player.inventory[j] != NULL && strcmp(map->player.inventory[j], map->roomsList[3].items[1]) == 0) {
 							hasKey = 1;
@@ -289,39 +344,33 @@ void gotoroom(struct Map* map, char* room, char* userInput) {
 					if(hasKey != 1) {
 						printf("\nYou need a key!\n\n");
 						return;
+					}*/
+
+					int hasKey = 0;
+					for(j = 0; j < INV_SIZE_MAX; j++) {
+						if(map->player.inventory[j] != NULL) {
+							if(strcmp(map->player.inventory[j], "key") == 0) {
+								hasKey = 1;
+							}
+						}
 					}
+					if(hasKey != 1) {
+						printf("You need a key!\n\n");
+						return;
+					}	
+
+
+					
 				}
 
 				if(strcmp(room, map->roomsList[2].name) == 0) {	
 					
 					map->currentRoom = map->currentRoom->nearbyRooms[i];
 
+					undeadSkeleton();
 					printf("%s\n", map->currentRoom->description);
+					return;
 
-					int key = 0;	
-					while(key == 0) {
-						printf("> ");
-
-						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
-							printf("Input error!\n");
-							return;
-						}
-						userInput[strlen(userInput)-1] = '\0';
-
-						if(strcmp(userInput, "fight") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
-						if(strcmp(userInput, "run") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
-					}
-					key = 1;
 				}
 
 				if(strcmp(room, map->roomsList[3].name) == 0) {	
@@ -579,7 +628,8 @@ void fight(struct Map* map, char* userInput) {
 		printf("MISS!\n");
 		printf("MISS!\n");
 		printf("HIT!\n\n");
-		printf("You have elmininated the ghosts who swarmed you. One of them drops a key. Could be useful, you should pick it up.\n\n");
+		printf("You have elmininated the ghosts who swarmed you. One of them drops a key. Could be useful, you should pick it up.\n\n");	
+		map->currentRoom->hasEnemy = 0;
 		return;
 	}
 
@@ -612,6 +662,7 @@ void fight(struct Map* map, char* userInput) {
 		
 			map->player.inventory[0] = "Enchanted sword\n";
 			printf("\n\nCheck your inventory!\n\n");
+			map->currentRoom->hasEnemy = 0;
 			return;
 		}
 
@@ -667,6 +718,7 @@ void fight(struct Map* map, char* userInput) {
 			printf("\nYou stand up, ready to fight again. The Skeleton makes a lunge at you. Just as your life flashes before your eyes, your enchanted sword levitates behind the Skeleton. It rips through the air at lightening speed and rips apart the Skeleton bone by bone. You have been saved by some mysterious force. You have won.\n\n\n\n");
 		
 			printf("CONGRATULATIONS! %s you have reached the end of the game. Thank you for playing.\n\n", map->player.name);
+			map->currentRoom->hasEnemy = 0;
 		}
 		
 		if(strcmp(userInput, "run") == 0) {
