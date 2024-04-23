@@ -47,13 +47,16 @@ void helpMenu();
 void headstoneMap();
 void printNearby(struct Map*);
 void gotoroom(struct Map*, char*, char* userInput);
-void whereami(struct Map*);
 void pickup(struct Map*, char*);
 void inventory(struct Map*);
 void run(struct Map*);
 void fight(struct Map*, char* userInput);
 void altDescCheck(struct Map*);
 void undeadSkeleton();
+void scaryGhost();
+void strongSkeleton();
+void flameSkeleton();
+void defeatedSkeleton();
 
 	/* Creates the definitions of all the rooms and returns the map pointer */
 struct Map* initMap() {
@@ -72,11 +75,10 @@ struct Map* initMap() {
 	map->roomsList[5].name = "Morgue_Storage";
 	map->roomsList[6].name = "Old_Chapel";
 
-	
 	map->roomsList[2].hasEnemy = 1;
 	map->roomsList[3].hasEnemy = 1;
 	map->roomsList[5].hasEnemy = 1;
-	map->roomsList[6].hasEnemy = 1;
+	map->roomsList[6].hasEnemy = 1;	
 
 
 	
@@ -86,7 +88,7 @@ struct Map* initMap() {
 
 	map->roomsList[1].description = "\nYou are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here. You notice a sword rested upon a tombstone. It could prove to be useful, you should pick it up.\n\n";
 	
-map->roomsList[2].description = "\nYou are currently at the Lost_Burials. Those forgotten in history roam this area angry and undead. They notice you and begin to swarm you. Do you run or fight?\n\n";
+	map->roomsList[2].description = "\nYou are currently at the Lost_Burials. Those forgotten in history roam this area angry and undead. They notice you and begin to swarm you. Do you run or fight?\n\n";
 
 	map->roomsList[3].description = "\nYou are currently in the Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. Those who enter these woods rarely come out alive. You are surrouned by ghosts who crave a body to inhabit. Do you run or fight?.\n\n";
 
@@ -97,14 +99,18 @@ map->roomsList[2].description = "\nYou are currently at the Lost_Burials. Those 
 	map->roomsList[6].description = "\nYou are currently at the Old_Chapel. An old structure that appears it could collapse any second. You sense victory is near and a strong urge to fight overwhelms you. You enter the chapel and at the alter you see him. The final opponent. The Skeleton. Do you run or fight?\n\n";
 
 
-		/* Alternate descriptions of rooms [1], [3], and [4] */
+		/* Alternate descriptions of specific rooms */
 	
-	map->roomsList[1].altDescription = "You are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here.\n\n";
+	map->roomsList[1].altDescription = "\nYou are currently in the Ancient_Ruins. Centuries old graves of those who died many years ago lay to rest here.\n\n";
 
-	map->roomsList[3].altDescription = "You are currently in Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. Those who enter these woods rarely come out alive. Good luck.\n\n";
+	map->roomsList[2].altDescription = "\nYou are currently at the Lost_Burials. Those forgotten in history roam this area angry and undead.\n\n"; 
+ 
+	map->roomsList[3].altDescription = "\nYou are currently in Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. Those who enter these woods rarely come out alive. Good luck.\n\n";
 
-	map->roomsList[4].altDescription = "You are currently at the Morgue. An overgrown house that is home to those yet to be buried.\n\n";
+	map->roomsList[4].altDescription = "\nYou are currently at the Morgue. An overgrown house that is home to those yet to be buried.\n\n";
 
+	map->roomsList[5].altDescription = "\nYou are currently inside the morgue storage room. It is filled with the undead waiting for their time to be buried.\n\n"; 
+	map->roomsList[6].altDescription = "\nYou are currently at the Old_Chapel. An old structure that appears it could collapse any second.\n\n"; 
 
 
 		/* Set the items in each room */
@@ -220,10 +226,6 @@ int main() {
 			printNearby(gameMap);
 		}
 
-		if(strcmp(userInput, "whereami") == 0) {
-			whereami(gameMap);
-		}
-
 		token = strtok(userInput, " ");
 		if(strcmp(token, "goto") == 0) {
 			token = strtok(NULL, " ");
@@ -259,49 +261,6 @@ int main() {
 	return 0;
 }
 
-void undeadSkeleton() {
-
-        printf("\n\n");
-        printf("                              _.--\"\"-._\n");
-        printf("  .                         .\"         \".\n");
-        printf(" / \\    ,^.         /(     Y             |      )\\\n");
-        printf("/   `---. |--'\\    (  \\__..'--   -   -- -'\"\"-.-'  )\n");
-        printf("|        :|    `>   '.     l_..-------.._l      .'\n");
-        printf("|      __l;__ .'      \"-.__.||_.-'v'-._||`\"----\"\n");
-        printf(" \\  .-' | |  `              l._       _.'\n");
-        printf("  \\/    | |                   l`^^'^^'j\n");
-        printf("        | |                _   \\_____/     _\n");
-        printf("        j |               l `--__)-'(__.--' |\n");
-        printf("        | |               | /`---``-----'\"1 |  ,-----.\n");
-        printf("        | |               )/  `--' '---'   \\'-'  ___  `-. \n");
-        printf("      _ L |_            //  `-.-.'`-----'  /  /  |   |  `. \\\n");
-        printf("     '._' / \\         _/(   `/   )- ---' ;  /__.J   L.__.\\ :\n");
-        printf("      `._;/7(-.......'  /        ) (     |  |            | |\n");
-        printf("      `._;l _'--------_/        )-'/     :  |___.    _._./ ;\n");
-        printf("        | |                 .__ )-'\\  __  \\  \\  I   1   / /\n");
-        printf("        `-'                /   `-\\-(-'   \\ \\  `.|   | ,' /\n");
-        printf("                           \\__  `-'    __/  `-. `---'',-'\n");
-        printf("                              )-._.-- (        `-----'\n");
-        printf("                             )(  l\\ o ('..-.\n");
-        printf("                       _..--' _'-' '--'.-. |\n");
-        printf("                __,,-'' _,,-''            \\ \\\n");
-        printf("               f'. _,,-'                   \\ \\\n");
-        printf("              ()--  |                       \\ \\\n");
-        printf("                \\   |                       /  \\\n");
-        printf("                  \\ \\                      |._  |\n");
-        printf("                   \\ \\                     |  ()|\n");
-        printf("                    \\ \\                     \\  /\n");
-        printf("                     ) `-.                   | |\n");
-        printf("                    // .__)                  | |\n");
-        printf("                 _.//7'                      | |\n");
-        printf("               '---'                         j_| `\n");
-        printf("                                            (| |\n");
-        printf("                                             |  \\\n");
-        printf("                                             |lllj\n");
-        printf("                                             |||||\n\n\n");
-
-}
-
 	/* Pick up items throughout the game */
 void pickup(struct Map* map, char* item) {
 
@@ -326,165 +285,147 @@ void pickup(struct Map* map, char* item) {
 
 	/* Traverse between areas of the game */
 void gotoroom(struct Map* map, char* room, char* userInput) {
-	int i, j, k;
+	int i, j;
 	for(i = 0; i < NEARBY_ROOMS_MAX; i++) {
 		if(map->currentRoom->nearbyRooms[i] != NULL) {
 			if(strcmp(map->currentRoom->nearbyRooms[i]->name, room) == 0)  {
 
-					/* Check if player has the key to enter Morgue_Storage area */
-				if(strcmp(room, map->roomsList[5].name) == 0) {	
-					
-					/*int hasKey = 0;
-					for(j = 0; j < INV_SIZE_MAX; j++) {
-						if(map->player.inventory[j] != NULL && strcmp(map->player.inventory[j], map->roomsList[3].items[1]) == 0) {
+
+					/* Check if player has 'key' in their inventory */
+				int hasKey = 0;
+
+				for(j = 0; j < INV_SIZE_MAX; j++) {
+					if(map->player.inventory[j] != NULL) {
+						if(strcmp(map->player.inventory[j], "key") == 0) {
 							hasKey = 1;
-							break;
 						}
 					}
+				}
+
+
+					/* Check if player has the key to enter Morgue_Storage area */
+				if(strcmp(room, map->roomsList[5].name) == 0) {	
+						
 					if(hasKey != 1) {
 						printf("\nYou need a key!\n\n");
 						return;
-					}*/
-
-					int hasKey = 0;
-					for(j = 0; j < INV_SIZE_MAX; j++) {
-						if(map->player.inventory[j] != NULL) {
-							if(strcmp(map->player.inventory[j], "key") == 0) {
-								hasKey = 1;
-							}
-						}
-					}
-					if(hasKey != 1) {
-						printf("You need a key!\n\n");
-						return;
 					}	
-
-
-					
 				}
+
 
 				if(strcmp(room, map->roomsList[2].name) == 0) {	
 					
 					map->currentRoom = map->currentRoom->nearbyRooms[i];
 
 					undeadSkeleton();
+
 					printf("%s\n", map->currentRoom->description);
 					return;
 
 				}
 
 				if(strcmp(room, map->roomsList[3].name) == 0) {	
+	
+					map->currentRoom = map->currentRoom->nearbyRooms[i];
+
+					if(map->currentRoom->hasEnemy == 0 && hasKey == 0) {
+
+						printf("\nYou are currently in Soul_Forest. A heavily wooded area seperating the cemetery from the rest of the graveyard. \n\nDon't forget the ghost dropped a key!\n\n");
+						return;
+					}
+
+					else if(map->currentRoom->hasEnemy == 0 && hasKey == 1) {
+
+						printf("%s\n", map->currentRoom->altDescription);
+						return;
+					}
+
+					
+					else {
+
+						scaryGhost();
+
+						printf("%s\n", map->currentRoom->description);
+						return;
+					}
+				}
+
+				if(strcmp(room, map->roomsList[4].name) == 0) {	
 					
 					map->currentRoom = map->currentRoom->nearbyRooms[i];
 
-					printf("%s\n", map->currentRoom->description);
+					if(hasKey == 0) {
 
-					int key = 0;	
-					while(key == 0) {
-						printf("> ");
-
-						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
-							printf("Input error!\n");
-							return;
-						}
-						userInput[strlen(userInput)-1] = '\0';
-
-						if(strcmp(userInput, "fight") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
-						if(strcmp(userInput, "run") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
+						printf("%s\n", map->currentRoom->description);
+						return;
 					}
-					key = 1;
-				}
+	
+					else {
+						
+						printf("%s\n", map->currentRoom->altDescription);
+						return;
+					}
+
+				} 	
 
 				if(strcmp(room, map->roomsList[5].name) == 0) {	
 					
 					map->currentRoom = map->currentRoom->nearbyRooms[i];
 
+					strongSkeleton();
+
 					printf("%s\n", map->currentRoom->description);
+					return;
 
-					int key = 0;	
-					while(key == 0) {
-						printf("> ");
-
-						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
-							printf("Input error!\n");
-							return;
-						}
-						userInput[strlen(userInput)-1] = '\0';
-
-						if(strcmp(userInput, "fight") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
-						if(strcmp(userInput, "run") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
-					}
-					key = 1;
 				}     
 
 				if(strcmp(room, map->roomsList[6].name) == 0) {	
 					
 					map->currentRoom = map->currentRoom->nearbyRooms[i];
 
+					flameSkeleton();
+
 					printf("%s\n", map->currentRoom->description);
+					return;
 
-					int key = 0;	
-					while(key == 0) {
-						printf("> ");
-
-						if(fgets(userInput, MAX_INPUT_SIZE, stdin) == NULL) {
-							printf("Input error!\n");
-							return;
-						}
-						userInput[strlen(userInput)-1] = '\0';
-
-						if(strcmp(userInput, "fight") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
-						if(strcmp(userInput, "run") != 0) {
-
-							printf("\nYou must either run or fight!\n\n");
-							return;
-						}
-
-					}
-					key = 1;
 				} 	
 
 				map->currentRoom = map->currentRoom->nearbyRooms[i];
-			
-			
-				/* check for picked up items for alternate description */
-				for(k = 0; k < INV_SIZE_MAX; k++) {
-					if(map->currentRoom->items[k] != NULL) {
-						for(j = 0; j < INV_SIZE_MAX; j++) {
-							if(map->player.inventory[j] == map->currentRoom->items[k] && map->player.inventory[j] != NULL) {
-								printf("\n%s\n", map->currentRoom->altDescription);
-								return;
-							}
-						}
-					}
+
+
+				if(strcmp(room, map->roomsList[0].name) == 0) {
+
+					printf("%s\n", map->currentRoom->description);
+					return;
 				}
-				printf("%s\n", map->currentRoom->description);
-				return;
+
+			
+					/* Gives alternate description if sword has been picked up */
+				if(map->currentRoom->items[0] == NULL) {
+
+
+					printf("\n%s\n", map->currentRoom->altDescription);
+					return;
+				}
+
+				else {
+			
+					printf("%s\n", map->currentRoom->description);
+					return;
+				}
+	
+			
+					/* check if enemy has been fought for alternate description */
+				if(map->currentRoom->hasEnemy == 1) { 
+					printf("\n%s\n", map->currentRoom->description);
+					return;
+				}
+			
+				else {
+			
+					printf("%s\n", map->currentRoom->altDescription);
+					return;
+				}
 			}
 		}
 	}
@@ -515,8 +456,7 @@ void helpMenu() {
 			"\tpickup <item>:	picks up item\n"
 			"\thelp:	\topens this menu\n"
 			"\tquit:	\texits the game\n"
-			"\twhereami:   \tdescribes your current location\n"
-			"\tinventory:	displays contents of your inventory\n");
+			"\tinventory:	displays contents of your inventory\n\n");
 }
 
 	/* Print nearby areas of the game */
@@ -530,12 +470,6 @@ void printNearby(struct Map* map) {
 	
 	}
 	printf("\n\n");
-}
-
-	/*Give player current location */
-void whereami(struct Map* map) {
-
-	altDescCheck(map);
 }
 
 	/* Prints items in players inventory */
@@ -609,15 +543,17 @@ void fight(struct Map* map, char* userInput) {
 			return;
 		}
 
-		printf("\nHIT!\n");
-		printf("HIT!\n");
-		printf("HIT!\n");
-		printf("HIT!\n");
-		printf("HIT!\n");
-		printf("HIT!\n\n");
-		printf("You have come out victorious against the undead. Your sword cut through them like butter. Good job!\n\n");
-		map->currentRoom->hasEnemy = 0;
-		return;
+		else {
+			printf("\nHIT!\n");
+			printf("HIT!\n");
+			printf("HIT!\n");
+			printf("HIT!\n");
+			printf("HIT!\n");
+			printf("HIT!\n\n");
+			printf("You have come out victorious against the undead. Your sword cut through them like butter. Good job!\n\n");
+			map->currentRoom->hasEnemy = 0;
+			return;
+		}
 	}
 
 	if(strcmp(map->currentRoom->name, map->roomsList[3].name) == 0 ) {
@@ -716,9 +652,18 @@ void fight(struct Map* map, char* userInput) {
 		if(strcmp(userInput, "fight") == 0) {
 
 			printf("\nYou stand up, ready to fight again. The Skeleton makes a lunge at you. Just as your life flashes before your eyes, your enchanted sword levitates behind the Skeleton. It rips through the air at lightening speed and rips apart the Skeleton bone by bone. You have been saved by some mysterious force. You have won.\n\n\n\n");
-		
+	
+			defeatedSkeleton();
+	
 			printf("CONGRATULATIONS! %s you have reached the end of the game. Thank you for playing.\n\n", map->player.name);
 			map->currentRoom->hasEnemy = 0;
+
+			printf("\n\n************************************************************************************\n");
+			printf("******************                                          ************************\n");
+			printf("****************** CREDIT GOES TO asciiart.eu FOR ASCII ART ************************\n");
+			printf("******************                                          ************************\n");
+			printf("************************************************************************************\n");
+
 		}
 		
 		if(strcmp(userInput, "run") == 0) {
@@ -746,19 +691,184 @@ void headstoneMap() {
 
 	/* REUSABLE CODE for the alternate desciption of areas*/
 void altDescCheck(struct Map* map) {
-	int j, k;
-
-	/* check for picked up items for alternate description */
-	for(k = 0; k < INV_SIZE_MAX; k++) {
-		if(map->currentRoom->items[k] != NULL) {
-			for(j = 0; j < INV_SIZE_MAX; j++) {
-				if(map->player.inventory[j] == map->currentRoom->items[k] && map->player.inventory[j] != NULL) {
-					printf("\n%s\n", map->currentRoom->altDescription);
-					return;
-				}
-			}
-		}
+	
+	if(strcmp(map->currentRoom->name, map->roomsList[0].name) == 0 ) {
+		printf("\n%s\n", map->currentRoom->description); 
+		return;
 	}
-	printf("%s\n", map->currentRoom->description);
-	return;
+
+	if(strcmp(map->currentRoom->name, map->roomsList[2].name) == 0 ) {
+		printf("\n%s\n", map->currentRoom->altDescription); 
+		return;
+	}
+
+ 	if(strcmp(map->currentRoom->name, map->roomsList[4].name) == 0 ) {
+		printf("\n%s\n", map->currentRoom->altDescription); 
+		return;
+	}
+
+}
+
+	/* ASCII art of undead skeleton */
+void undeadSkeleton() {
+
+        printf("\n\n");
+        printf("                              _.--\"\"-._\n");
+        printf("  .                         .\"         \".\n");
+        printf(" / \\    ,^.         /(     Y             |      )\\\n");
+        printf("/   `---. |--'\\    (  \\__..'--   -   -- -'\"\"-.-'  )\n");
+        printf("|        :|    `>   '.     l_..-------.._l      .'\n");
+        printf("|      __l;__ .'      \"-.__.||_.-'v'-._||`\"----\"\n");
+        printf(" \\  .-' | |  `              l._       _.'\n");
+        printf("  \\/    | |                   l`^^'^^'j\n");
+        printf("        | |                _   \\_____/     _\n");
+        printf("        j |               l `--__)-'(__.--' |\n");
+        printf("        | |               | /`---``-----'\"1 |  ,-----.\n");
+        printf("        | |               )/  `--' '---'   \\'-'  ___  `-. \n");
+        printf("      _ L |_            //  `-.-.'`-----'  /  /  |   |  `. \\\n");
+        printf("     '._' / \\         _/(   `/   )- ---' ;  /__.J   L.__.\\ :\n");
+        printf("      `._;/7(-.......'  /        ) (     |  |            | |\n");
+        printf("      `._;l _'--------_/        )-'/     :  |___.    _._./ ;\n");
+        printf("        | |                 .__ )-'\\  __  \\  \\  I   1   / /\n");
+        printf("        `-'                /   `-\\-(-'   \\ \\  `.|   | ,' /\n");
+        printf("                           \\__  `-'    __/  `-. `---'',-'\n");
+        printf("                              )-._.-- (        `-----'\n");
+        printf("                             )(  l\\ o ('..-.\n");
+        printf("                       _..--' _'-' '--'.-. |\n");
+        printf("                __,,-'' _,,-''            \\ \\\n");
+        printf("               f'. _,,-'                   \\ \\\n");
+        printf("              ()--  |                       \\ \\\n");
+        printf("                \\   |                       /  \\\n");
+        printf("                  \\ \\                      |._  |\n");
+        printf("                   \\ \\                     |  ()|\n");
+        printf("                    \\ \\                     \\  /\n");
+        printf("                     ) `-.                   | |\n");
+        printf("                    // .__)                  | |\n");
+        printf("                 _.//7'                      | |\n");
+        printf("               '---'                         j_| `\n");
+        printf("                                            (| |\n");
+        printf("                                             |  \\\n");
+        printf("                                             |lllj\n");
+        printf("                                             |||||\n\n\n");
+
+}
+
+        /* ASCII art of ghost */
+void scaryGhost() {
+
+        printf("\n\n");
+        printf("     .-.\n");
+        printf("   .'   `.\n");
+        printf("   :g g   :\n");
+        printf("   : o    `.\n");
+        printf("  :         ``.\n");
+        printf(" :             `.\n");
+        printf(":  :         .   `.\n");
+        printf(":   :          ` . `.\n");
+        printf(" `.. :            `. ``;\n");
+        printf("    `:;             `:'\n");
+        printf("       :              `.\n");
+        printf("        `.              `.     .\n");
+        printf("          `'`'`'`---..,___`;.-'\n\n");
+
+}
+
+       /* ASCII art of strong skeleton */
+void strongSkeleton() {
+
+        printf("\n\n");
+        printf("             .7\n");
+        printf("            .'/\n");
+        printf("           / /\n");
+        printf("          / /\n");
+        printf("         / /\n");
+        printf("        / /\n");
+        printf("       / /\n");
+        printf("      / /\n");
+        printf("     / /\n");
+        printf("    / /\n");
+        printf("  __|/\n");
+        printf(",-\\__\\\n");
+        printf("|f-\"Y\\|\n");
+        printf("\\()7L/\n");
+        printf(" cgD                            __ _\n");
+        printf(" |\\(                          .'  Y '>,\n");
+        printf("  \\ \\                        / _   _   \\\n");
+        printf("   \\\\                       )(_) (_)(|}\n");
+        printf("    \\\\                      {  4A   } /\n");
+        printf("     \\\\                      \\uLuJJ/\\l\n");
+        printf("      \\\\                     |3    p)/\n");
+        printf("       \\\\___ __________      /nnm_n//\n");
+        printf("       c7___-__,__-),__)('.  \\_>-<_/D\n");
+        printf("                  //V     \\_\"-._.__G G_c__.-__<\"/ ( \\\n");
+        printf("                         <\"-._>__-,G_.___)\\   \\7\\\n");
+        printf("                        (\"-.__.| \"<.__.-\" )   \\ \\\n");
+        printf("                        |\"-.__\"\\  |\"-.__.-\".\\   \\ \\\n");
+        printf("                        (\"-.__\"\". \\\"-.__.-\".|    \\_\\\n");
+        printf("                         \"-.__\"\"\\_|\"-.__.-\"./      \\ l\n");
+        printf("                          \".__\"\">G>-.__.-\">       .--,_\n\n\n");
+
+}
+
+	/*ASCII art of Skeleton */
+void flameSkeleton() {
+
+        printf("\n\n");
+        printf("                 .            )        )\n");
+        printf("                  (  (|              .\n");
+        printf("              )   )\\/ ( ( (          \n");
+        printf("      *  (   ((  /     ))\\))  (  )    )\n");
+        printf("    (     \\   )\\(          |  ))( )  (|\n");
+        printf("    >)     ))/   |          )/  \\((  ) \"\n");
+        printf("    (     (      .        -.     V )/   )(    (\n");
+        printf("     \\   /     .   \\            .       \\))   ))\n");
+        printf("       )(      (  | |   )            .    (  /\n");
+        printf("      )(    ,'))     \\ /          \\( `.    )\n");
+        printf("      (\\>  ,'/__      ))            __`.  /\n");
+        printf("     ( \\   | /  ___   ( \\/     ___   \\ | ( (\n");
+        printf("      \\.)  |/  /   \\__      __/   \\  \\ \\|  )))\n");
+        printf("     .  \\. |>  \\      | __ |      /   <|  /\n");
+        printf("          )/    \\____/ :..: \\____/     \\ <\n");
+        printf("   )   \\ (|__  .      / ;: \\          __| )  (\n");
+        printf("  ((    )\\)  ~--_     --  --      _--~    /  ))\n");
+        printf("   \\    (    |  ||               ||  |   (  /\n");
+        printf("         \\.  |  ||_             _||  |  /\n");
+        printf("           > :  |  ~V+-I_I_I-+V~  |  : (.\n");
+        printf("          (  \\:  T\\   _     _   /T  : ./\n");
+        printf("           \\  :    T^T T-+-T T^T    ;<\n");
+        printf("            \\..`_       -+-       _'  )\n");
+        printf("  )            . `--=.._____..=--'. ./  \n\n");
+
+}
+
+        /* ASCII art of defeated skeleton */
+void defeatedSkeleton() {
+
+        printf("\n\n");
+        printf("                          ,--.\n");
+        printf("                          {    }\n");
+        printf("                          K,   }\n");
+        printf("                         /  `Y`\n");
+        printf("                    _   /   /\n");
+        printf("                   {_'-K.__/\n");
+        printf("                     `/-.__L._\n");
+        printf("                     /  ' /`\\_}\n");
+        printf("                    /  ' /                  \n");
+        printf("            ____   /  ' /\n");
+        printf("     ,-'~~~~    ~~/  ' /_\n");
+        printf("   ,'             ``~~~%%',\n");
+        printf("  (                     %%  Y\n");
+        printf(" {                      %% I\n");
+        printf("{      -                 %%  `.\n");
+        printf("|       ',                %%  )\n");
+        printf("|        |   ,..__      __. Y\n");
+        printf("|    .,_./  Y ' / ^Y   J   )|\n");
+        printf("\\           |' /   |   |   ||\n");
+        printf(" \\          L_/    . _ (_,.'(\n");
+        printf("  \\,   ,      ^^\"\"' / |      )\n");
+        printf("    \\_  \\          /,L]     /\n");
+        printf("      '-_`-,       ` `   ./'  \n");
+        printf("         `-(_            )\n");
+        printf("             ^^\\..___,.--`\n\n\n");
+
 }
