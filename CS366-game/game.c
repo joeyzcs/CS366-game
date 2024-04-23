@@ -57,6 +57,7 @@ void scaryGhost();
 void strongSkeleton();
 void flameSkeleton();
 void defeatedSkeleton();
+void credits();
 
 	/* Creates the definitions of all the rooms and returns the map pointer */
 struct Map* initMap() {
@@ -226,6 +227,10 @@ int main() {
 			printNearby(gameMap);
 		}
 
+		if(strcmp(userInput, "credits") == 0) {
+			credits();
+		}
+
 		token = strtok(userInput, " ");
 		if(strcmp(token, "goto") == 0) {
 			token = strtok(NULL, " ");
@@ -296,7 +301,7 @@ void gotoroom(struct Map* map, char* room, char* userInput) {
 
 				for(j = 0; j < INV_SIZE_MAX; j++) {
 					if(map->player.inventory[j] != NULL) {
-						if(strcmp(map->player.inventory[j], "key") == 0) {
+						if((strcmp(map->player.inventory[j], "key") == 0) || (strcmp(map->player.inventory[j], "key") == 0)) {
 							hasKey = 1;
 						}
 					}
@@ -456,7 +461,8 @@ void helpMenu() {
 			"\tpickup <item>:	picks up item\n"
 			"\thelp:	\topens this menu\n"
 			"\tquit:	\texits the game\n"
-			"\tinventory:	displays contents of your inventory\n\n");
+			"\tinventory:	displays contents of your inventory\n"
+			"\tcredits:	show credits\n\n");
 }
 
 	/* Print nearby areas of the game */
@@ -658,12 +664,6 @@ void fight(struct Map* map, char* userInput) {
 			printf("CONGRATULATIONS! %s you have reached the end of the game. Thank you for playing.\n\n", map->player.name);
 			map->currentRoom->hasEnemy = 0;
 
-			printf("\n\n************************************************************************************\n");
-			printf("******************                                          ************************\n");
-			printf("****************** CREDIT GOES TO asciiart.eu FOR ASCII ART ************************\n");
-			printf("******************                                          ************************\n");
-			printf("************************************************************************************\n");
-
 		}
 		
 		if(strcmp(userInput, "run") == 0) {
@@ -709,6 +709,15 @@ void altDescCheck(struct Map* map) {
 
 }
 
+void credits() {
+			printf("\n\n************************************************************************************\n");
+			printf("******************                                          ************************\n");
+			printf("****************** CREDIT GOES TO asciiart.eu FOR ASCII ART ************************\n");
+			printf("******************                                          ************************\n");
+			printf("************************************************************************************\n\n");
+
+}
+
 	/* ASCII art of undead skeleton */
 void undeadSkeleton() {
 
@@ -724,8 +733,8 @@ void undeadSkeleton() {
         printf("        | |                _   \\_____/     _\n");
         printf("        j |               l `--__)-'(__.--' |\n");
         printf("        | |               | /`---``-----'\"1 |  ,-----.\n");
-        printf("        | |               )/  `--' '---'   \\'-'  ___  `-. \n");
-        printf("      _ L |_            //  `-.-.'`-----'  /  /  |   |  `. \\\n");
+        printf("        | |               )/  `--' '---'   \\'-'  ___  `-.                                             Skeletons Appear!\n");
+        printf("      _ L |_            //  `-.-.'`-----'  /  /  |   |  `. \\                                          'run' or 'fight'!\n");
         printf("     '._' / \\         _/(   `/   )- ---' ;  /__.J   L.__.\\ :\n");
         printf("      `._;/7(-.......'  /        ) (     |  |            | |\n");
         printf("      `._;l _'--------_/        )-'/     :  |___.    _._./ ;\n");
@@ -761,8 +770,8 @@ void scaryGhost() {
         printf("   .'   `.\n");
         printf("   :g g   :\n");
         printf("   : o    `.\n");
-        printf("  :         ``.\n");
-        printf(" :             `.\n");
+        printf("  :         ``.                                            The Ghost Approaches!\n");
+        printf(" :             `.                                            'run' or 'fight'!\n");
         printf(":  :         .   `.\n");
         printf(":   :          ` . `.\n");
         printf(" `.. :            `. ``;\n");
@@ -793,8 +802,8 @@ void strongSkeleton() {
         printf("\\()7L/\n");
         printf(" cgD                            __ _\n");
         printf(" |\\(                          .'  Y '>,\n");
-        printf("  \\ \\                        / _   _   \\\n");
-        printf("   \\\\                       )(_) (_)(|}\n");
+        printf("  \\ \\                        / _   _   \\                                            Skeleton Boss Appears!\n");
+        printf("   \\\\                       )(_) (_)(|}                                               'run' or 'fight'!\n");
         printf("    \\\\                      {  4A   } /\n");
         printf("     \\\\                      \\uLuJJ/\\l\n");
         printf("      \\\\                     |3    p)/\n");
@@ -820,8 +829,8 @@ void flameSkeleton() {
         printf("      *  (   ((  /     ))\\))  (  )    )\n");
         printf("    (     \\   )\\(          |  ))( )  (|\n");
         printf("    >)     ))/   |          )/  \\((  ) \"\n");
-        printf("    (     (      .        -.     V )/   )(    (\n");
-        printf("     \\   /     .   \\            .       \\))   ))\n");
+        printf("    (     (      .        -.     V )/   )(    (                                            Flame Skeleton Appears!\n");
+        printf("     \\   /     .   \\            .       \\))   ))                                             'run' or 'fight'!\n");
         printf("       )(      (  | |   )            .    (  /\n");
         printf("      )(    ,'))     \\ /          \\( `.    )\n");
         printf("      (\\>  ,'/__      ))            __`.  /\n");
